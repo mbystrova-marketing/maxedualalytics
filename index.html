@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>99 Баллов — Стратегия на MAX</title>
+<style>
+  :root {
+    --bg: #0b0e14;
+    --bg2: #111520;
+    --bg3: #181d2a;
+    --card: #1a1f2e;
+    --card2: #1f2636;
+    --border: #252d3f;
+    --accent: #f5a623;
+    --accent2: #e8912a;
+    --accent-soft: rgba(245,166,35,0.12);
+    --accent-glow: rgba(245,166,35,0.06);
+    --blue: #4a90d9;
+    --blue-soft: rgba(74,144,217,0.12);
+    --green: #48bb78;
+    --green-soft: rgba(72,187,120,0.12);
+    --red: #fc6058;
+    --red-soft: rgba(252,96,88,0.12);
+    --text: #e8eaf0;
+    --text2: #9aa3b8;
+    --text3: #5c6480;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─── */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(11,14,20,0.92);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 clamp(16px, 5vw, 48px);
+  }
+
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    height: 60px;
+  }
+
+  .logo {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--accent);
+    white-space: nowrap;
+    letter-spacing: -0.3px;
+  }
+  .logo span { color: var(--text); font-weight: 400; }
+
+  .nav-tabs {
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    flex: 1;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+
+  .nav-tab {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--text2);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .nav-tab:hover { color: var(--text); background: var(--bg3); }
+  .nav-tab.active { color: var(--accent); background: var(--accent-soft); }
+
+  /* ─── HERO ─── */
+  .hero {
+    background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 50%, #141825 100%);
+    border-bottom: 1px solid var(--border);
+    padding: clamp(40px, 8vw, 80px) clamp(16px, 5vw, 48px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(245,166,35,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent-soft);
+    border: 1px solid rgba(245,166,35,0.25);
+    color: var(--accent);
+    font-size: 12px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(26px, 5vw, 48px);
+    font-weight: bold;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+  .hero h1 em { color: var(--accent); font-style: normal; }
+
+  .hero-sub {
+    color: var(--text2);
+    font-size: 16px;
+    max-width: 600px;
+    margin-bottom: 36px;
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    max-width: 800px;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+  .stat-num {
+    font-family: Georgia, serif;
+    font-size: 26px;
+    font-weight: bold;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label { font-size: 12px; color: var(--text2); }
+
+  /* ─── SECTIONS ─── */
+  .section {
+    display: none;
+    padding: clamp(32px, 6vw, 64px) clamp(16px, 5vw, 48px);
+    max-width: 1200px;
+    margin: 0 auto;
+    animation: fadeIn 0.35s ease;
+  }
+  .section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-title {
+    font-family: Georgia, serif;
+    font-size: clamp(20px, 3vw, 28px);
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .section-desc {
+    color: var(--text2);
+    margin-bottom: 32px;
+    font-size: 14px;
+  }
+
+  /* ─── CARDS GRID ─── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .card:hover {
+    border-color: rgba(245,166,35,0.3);
+    transform: translateY(-2px);
+  }
+
+  .card-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    margin-bottom: 14px;
+  }
+  .icon-amber { background: var(--accent-soft); }
+  .icon-blue  { background: var(--blue-soft); }
+  .icon-green { background: var(--green-soft); }
+
+  .card h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+
+  .card p { color: var(--text2); font-size: 14px; }
+
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    margin-bottom: 12px;
+  }
+  .tag-amber { background: var(--accent-soft); color: var(--accent); border: 1px solid rgba(245,166,35,0.25); }
+  .tag-blue  { background: var(--blue-soft); color: var(--blue); border: 1px solid rgba(74,144,217,0.25); }
+
+  /* ─── PERSONAS ─── */
+  .persona {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .persona:hover { border-color: rgba(245,166,35,0.3); }
+
+  .persona-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .persona-avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    font-size: 24px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .persona-name { font-size: 17px; font-weight: 600; margin-bottom: 2px; }
+  .persona-role { font-size: 13px; color: var(--text2); }
+
+  .persona-body { padding: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media(max-width: 500px) { .persona-body { grid-template-columns: 1fr; } }
+
+  .persona-section h4 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text3);
+    margin-bottom: 10px;
+  }
+
+  .pain-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--text2);
+  }
+  .pain-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  /* ─── CHANNELS ─── */
+  .channels-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .channel-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .channel-item:hover { border-color: rgba(245,166,35,0.3); }
+  .channel-item.expanded { border-color: rgba(245,166,35,0.4); }
+
+  .channel-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .channel-rank {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  .channel-name { font-size: 15px; font-weight: 600; flex: 1; min-width: 180px; }
+  .channel-meta { font-size: 12px; color: var(--text2); }
+
+  .eff-bar-wrap { flex: 1; min-width: 120px; }
+  .eff-label { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+  .eff-bar {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--bg3);
+    overflow: hidden;
+  }
+  .eff-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.8s cubic-bezier(.4,0,.2,1);
+  }
+
+  .channel-details {
+    display: none;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .channel-item.expanded .channel-details { display: block; }
+
+  .channel-details p { font-size: 13px; color: var(--text2); margin-bottom: 12px; }
+
+  .channel-examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .channel-ex {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: var(--text2);
+  }
+
+  .expand-arrow {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--text3);
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+  .channel-item.expanded .expand-arrow { transform: rotate(180deg); }
+
+  /* ─── EFFECTIVENESS BADGES ─── */
+  .badge-eff {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .eff-1 { background: rgba(252,96,88,0.12); color: #fc6058; border: 1px solid rgba(252,96,88,0.2); }
+  .eff-2 { background: rgba(252,96,88,0.08); color: #f0875a; border: 1px solid rgba(252,96,88,0.15); }
+  .eff-3 { background: rgba(245,166,35,0.1); color: #d4a017; border: 1px solid rgba(245,166,35,0.2); }
+  .eff-4 { background: rgba(245,166,35,0.15); color: var(--accent); border: 1px solid rgba(245,166,35,0.3); }
+  .eff-5 { background: rgba(72,187,120,0.1); color: #48bb78; border: 1px solid rgba(72,187,120,0.2); }
+  .eff-6 { background: rgba(72,187,120,0.15); color: #38d97c; border: 1px solid rgba(72,187,120,0.3); }
+
+  .fill-1 { background: #fc6058; width: 10%; }
+  .fill-2 { background: #f0875a; width: 25%; }
+  .fill-3 { background: #d4a017; width: 40%; }
+  .fill-4 { background: var(--accent); width: 60%; }
+  .fill-5 { background: #48bb78; width: 80%; }
+  .fill-6 { background: #38d97c; width: 100%; }
+
+  .rank-1 { background: rgba(252,96,88,0.15); color: #fc6058; }
+  .rank-2 { background: rgba(240,135,90,0.15); color: #f0875a; }
+  .rank-3 { background: rgba(212,160,23,0.15); color: #d4a017; }
+  .rank-4 { background: rgba(245,166,35,0.15); color: var(--accent); }
+  .rank-5 { background: rgba(72,187,120,0.15); color: #48bb78; }
+  .rank-6 { background: rgba(56,217,124,0.15); color: #38d97c; }
+
+  /* ─── COMPARISON TABLE ─── */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead th {
+    background: var(--card2);
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  thead th:first-child { width: 160px; }
+
+  thead th.tg { color: #229ED9; }
+  thead th.mx { color: var(--accent); }
+
+  tbody tr:hover { background: var(--accent-glow); }
+
+  td {
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text2);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+
+  td:first-child {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .cell-good { color: var(--green); }
+  .cell-warn { color: var(--accent); }
+  .cell-bad  { color: var(--red); }
+
+  /* ─── HYPOTHESES ─── */
+  .hypo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+  }
+
+  .hypo-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .hypo-card:hover { border-color: rgba(245,166,35,0.35); transform: translateY(-2px); }
+
+  .hypo-num {
+    font-family: Georgia, serif;
+    font-size: 36px;
+    font-weight: bold;
+    color: rgba(245,166,35,0.12);
+    position: absolute;
+    top: 10px; right: 16px;
+    line-height: 1;
+  }
+
+  .hypo-card h4 { font-size: 14px; margin-bottom: 8px; color: var(--text); }
+  .hypo-card p  { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+  .hypo-metric {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .hypo-met-item {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  /* ─── CONCLUSIONS ─── */
+  .conclusion-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+
+  .concl-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .concl-num {
+    font-family: Georgia, serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .concl-card h4 { font-size: 14px; margin-bottom: 6px; }
+  .concl-card p  { font-size: 13px; color: var(--text2); }
+
+  .priority-box {
+    background: linear-gradient(135deg, var(--card) 0%, var(--bg3) 100%);
+    border: 1px solid rgba(245,166,35,0.3);
+    border-radius: var(--radius);
+    padding: 28px;
+  }
+  .priority-box h3 {
+    font-family: Georgia, serif;
+    font-size: 18px;
+    margin-bottom: 16px;
+    color: var(--accent);
+  }
+
+  .priority-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .priority-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.03);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+  }
+  .priority-label {
+    font-size: 13px;
+    flex: 1;
+    color: var(--text);
+  }
+  .priority-sub {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+  .prio-arrow {
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  /* ─── ACCORDION ─── */
+  .accordion-item {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .accordion-trigger {
+    width: 100%;
+    background: var(--card);
+    border: none;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    transition: background 0.2s;
+  }
+  .accordion-trigger:hover { background: var(--card2); }
+
+  .accordion-icon {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--text3);
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+  .accordion-item.open .accordion-icon { transform: rotate(180deg); }
+
+  .accordion-body {
+    display: none;
+    padding: 20px;
+    background: var(--bg3);
+    border-top: 1px solid var(--border);
+  }
+  .accordion-item.open .accordion-body { display: block; }
+
+  .accordion-body p { font-size: 13px; color: var(--text2); margin-bottom: 10px; }
+  .accordion-body ul { padding-left: 18px; }
+  .accordion-body li { font-size: 13px; color: var(--text2); margin-bottom: 6px; }
+
+  /* ─── MISC ─── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 28px 0;
+  }
+
+  .info-box {
+    background: var(--accent-soft);
+    border: 1px solid rgba(245,166,35,0.2);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-size: 13px;
+    color: var(--text2);
+    margin-bottom: 24px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .info-box-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    .header-inner { height: 52px; }
+    .logo { font-size: 15px; }
+    .nav-tab { padding: 5px 10px; font-size: 12px; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    table { min-width: 600px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo">99 Баллов<span> · Стратегия MAX</span></div>
+    <nav class="nav-tabs" id="navTabs">
+      <button class="nav-tab active" data-section="segments">Сегменты</button>
+      <button class="nav-tab" data-section="personas">Персонажи</button>
+      <button class="nav-tab" data-section="channels">Тематики каналов</button>
+      <button class="nav-tab" data-section="comparison">vs Telegram</button>
+      <button class="nav-tab" data-section="hypotheses">Гипотезы</button>
+      <button class="nav-tab" data-section="conclusions">Выводы</button>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">📊 Аналитический отчёт 2026</div>
+    <h1>Переход в <em>MAX</em>:<br>Инфлюенс-стратегия</h1>
+    <p class="hero-sub">Анализ целевой аудитории и гипотезы по каналам для рекламы онлайн-школы по подготовке к ЕГЭ/ОГЭ в мессенджере MAX</p>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num">70M</div>
+        <div class="stat-label">Ежедневная аудитория MAX</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">2,01M</div>
+        <div class="stat-label">Постов в категории «Образование» за янв. 2026</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">2</div>
+        <div class="stat-label">Ключевых сегмента ЦА</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">6</div>
+        <div class="stat-label">Типов каналов по эффективности</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SECTION: SEGMENTS ═══════════════════ -->
+<section class="section active" id="section-segments">
+  <h2 class="section-title">Целевые сегменты</h2>
+  <p class="section-desc">Два основных сегмента аудитории с различными мотивациями, болями и паттернами поведения в MAX</p>
+
+  <div class="cards-grid">
+    <!-- Children -->
+    <div class="card">
+      <div class="card-icon icon-amber">🎓</div>
+      <div class="tag tag-amber">Сегмент A</div>
+      <h3>Старшеклассники 15–18 лет</h3>
+      <p>Готовятся к ОГЭ/ЕГЭ. Активны в соцсетях, подписаны на развлекательные каналы. Во многом оказались в MAX по инициативе школы — часто воспринимают приложение скептически («нас заставляют скачивать Max»).</p>
+      <div class="divider"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <div class="channel-ex">Мемы и тренды</div>
+        <div class="channel-ex">Игры (Standoff)</div>
+        <div class="channel-ex">Школьные чаты</div>
+        <div class="channel-ex">Образование</div>
+      </div>
+    </div>
+
+    <!-- Parents -->
+    <div class="card">
+      <div class="card-icon icon-blue">👨‍👩‍👧</div>
+      <div class="tag tag-blue">Сегмент B</div>
+      <h3>Родители 30–45 лет</h3>
+      <p>Мамы и папы детей в старших классах. Беспокоятся о будущем ребёнка, хотят контролировать подготовку. Переходят в MAX по решению школы — пользуются родительскими чатами класса и новостными каналами.</p>
+      <div class="divider"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <div class="channel-ex">Родит. чаты</div>
+        <div class="channel-ex">Госуслуги</div>
+        <div class="channel-ex">Школьные новости</div>
+        <div class="channel-ex">Лайфстайл</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-size:16px;margin-bottom:16px;color:var(--text2);">Поведение в MAX</h3>
+
+  <div class="accordion-item open">
+    <button class="accordion-trigger" onclick="toggleAccordion(this)">
+      <span style="font-size:18px;">🎓</span> Старшеклассники — поведение и предпочтения
+      <span class="accordion-icon">▼</span>
+    </button>
+    <div class="accordion-body">
+      <p>Большинство попало в MAX через школьную инициативу, но активно использует мессенджер для общения с одноклассниками. Скептически относятся к рекламному контенту, особенно в развлекательных каналах.</p>
+      <ul>
+        <li>Подписываются на каналы по интересам: игры, мемы, челленджи</li>
+        <li>Реагируют на яркий визуал, мемы, короткие видео и тесты</li>
+        <li>Лучший оффер — «экзамен без зубрёжки» и история успеха</li>
+        <li>Доверяют образовательным каналам, если контент реально помогает</li>
+        <li>Канал «Объясняем.рф» (~78K) и «Лингвист. Русский язык» (~54K) — проверенные площадки</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <button class="accordion-trigger" onclick="toggleAccordion(this)">
+      <span style="font-size:18px;">👨‍👩‍👧</span> Родители — поведение и предпочтения
+      <span class="accordion-icon">▼</span>
+    </button>
+    <div class="accordion-body">
+      <p>Ориентированы на надёжность и доказательность. Переход в MAX воспринимают как расширение родительского чата класса. Реагируют на официальные источники и экспертные рекомендации.</p>
+      <ul>
+        <li>Читают каналы «Госуслуги для родителей» (200K) и «Минпросвещения России» (42K)</li>
+        <li>Доверяют отзывам других родителей и педагогов</li>
+        <li>Лучший формат — чек-листы, инфографика, примеры успеха («80+ баллов»)</li>
+        <li>Оффер: бесплатная консультация педагога или пробный урок</li>
+        <li>Канал «Между нами, мамочками» (57K) — точечная площадка для охвата</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <button class="accordion-trigger" onclick="toggleAccordion(this)">
+      <span style="font-size:18px;">📣</span> Эффективные форматы контента
+      <span class="accordion-icon">▼</span>
+    </button>
+    <div class="accordion-body">
+      <p>Контент должен различаться по сегментам, но объединяться общим брендом «99 Баллов»:</p>
+      <ul>
+        <li><strong style="color:var(--text);">Для школьников:</strong> мемы, тесты/квизы по предметам, яркие обложки с заголовками («Решить ЕГЭ за 5 мин»), геймификация, AI-инструменты</li>
+        <li><strong style="color:var(--text);">Для родителей:</strong> инфографика прогресса, истории успеха с цифрами, советы психологов, сравнение методик подготовки</li>
+        <li><strong style="color:var(--text);">Универсально:</strong> бесплатные вебинары, онлайн-квесты, пробные уроки</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SECTION: PERSONAS ═══════════════════ -->
+<section class="section" id="section-personas">
+  <h2 class="section-title">Персонажи аудитории</h2>
+  <p class="section-desc">Четыре архетипа пользователей с уникальными болями, мотивациями и точками входа</p>
+
+  <div class="cards-grid">
+
+    <div class="persona">
+      <div class="persona-header">
+        <div class="persona-avatar" style="background:rgba(245,166,35,0.15);font-size:22px;">📚</div>
+        <div>
+          <div class="persona-name">Ответственный ученик</div>
+          <div class="persona-role">16–18 лет · Готовится к ЕГЭ серьёзно</div>
+        </div>
+      </div>
+      <div class="persona-body">
+        <div class="persona-section">
+          <h4>Боли</h4>
+          <div class="pain-item"><span class="pain-dot"></span>Перегруз информацией и усталость</div>
+          <div class="pain-item"><span class="pain-dot"></span>Страх не набрать нужный балл</div>
+          <div class="pain-item"><span class="pain-dot"></span>Скука при традиционном обучении</div>
+        </div>
+        <div class="persona-section">
+          <h4>Мотивация</h4>
+          <div class="pain-item"><span class="pain-dot" style="background:var(--green)"></span>Хочет учиться быстро и эффективно</div>
+          <div class="pain-item"><span class="pain-dot" style="background:var(--green)"></span>Ищет интересный формат</div>
+          <div class="pain-item"><span class="pain-dot" style="background:var(--green)"></span>Хочет понятные объяснения</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="persona">
+      <div class="persona-header">
+        <div class="persona-avatar" style="background:rgba(74,144,217,0.15);font-size:22px;">🎮</div>
+        <div>
+          <div class="persona-name">«Себялюбивый» подросток</div>
+          <div class="persona-role">15–17 лет · Откладывает учёбу</div>
+        </div>
+      </div>
+      <div class="persona-body">
+        <div class="persona-section">
+          <h4>Боли</h4>
+          <div class="pain-item"><span class="pain-dot"></span>Не видит смысла в зубрёжке</div>
+          <div class="pain-item"><span class="pain-dot"></span>Привлекается трендами и играми</div>
+          <div class="pain-item"><span class="pain-dot"></span>Родители давят — стресс растёт</div>
+        </div>
+        <div class="persona-section">
+          <h4>Мотивация</h4>
+          <div class="pain-item"><span class="pain-dot" style="background:var(--blue)"></span>Реагирует на геймификацию</div>
+          <div class="pain-item"><span class="pain-dot" style="background:var(--blue)"></span>Нужна быстрая победа / результат</div>
+          <div class="pain-item"><span class="pain-dot" style="background:var(--blue)"></span>Реакция на тренды и мемы</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="persona">
+      <div class="persona-header">
+        <div class="persona-avatar" style="background:rgba(72,187,120,0.15);font-size:22px;">💛</div>
+        <div>
+          <div class="persona-name">Заботливая мама</div>
+          <div class="persona-role">35–45 лет · Контролирует подготовку</div>
+        </div>
+      </div>
+      <div class="persona-body">
+        <div class="persona-section">
+          <h4>Боли</h4>
+          <div class="pain-item"><span class="pain-dot"></span>Тревога за результаты ребёнка</div>
+          <div class="pain-item"><span class="pain-dot"></span>Нехватка знаний и времени</div>
+          <div class="pain-item"><span class="pain-dot"></span>Не знает, кому доверять</div>
+        </div>
+        <div class="persona-section">
+          <h4>Мотивация</h4>
+          <div class="pain-item"><span class="pain-dot" style="background:var(--green)"></span>Хочет надёжный, проверенный сервис</div>
+          <div class="pain-item"><span class="pain-dot" style="background:var(--green)"></span>Ищет рекомендации других мам</div>
+          <div class="pain-item"><span class="pain-dot" style="background:var(--green)"></span>Доверяет государственным каналам</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="persona">
+      <div class="persona-header">
+        <div class="persona-avatar" style="background:rgba(245,166,35,0.1);font-size:22px;">💼</div>
+        <div>
+          <div class="persona-name">Практичный папа</div>
+          <div class="persona-role">38–48 лет · Оценивает результат</div>
+        </div>
+      </div>
+      <div class="persona-body">
+        <div class="persona-section">
+          <h4>Боли</h4>
+          <div class="pain-item"><span class="pain-dot"></span>Нет времени разбираться в методиках</div>
+          <div class="pain-item"><span class="pain-dot"></span>Не понимает, за что платить</div>
+          <div class="pain-item"><span class="pain-dot"></span>Боится переплатить за неэффективное</div>
+        </div>
+        <div class="persona-section">
+          <h4>Мотивация</h4>
+          <div class="pain-item"><span class="pain-dot" style="background:var(--accent)"></span>Нужны конкретные цифры и результаты</div>
+          <div class="pain-item"><span class="pain-dot" style="background:var(--accent)"></span>Доверяет статистике и отзывам</div>
+          <div class="pain-item"><span class="pain-dot" style="background:var(--accent)"></span>Ценит прозрачность и гарантии</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════ SECTION: CHANNELS ═══════════════════ -->
+<section class="section" id="section-channels">
+  <h2 class="section-title">Тематики каналов</h2>
+  <p class="section-desc">Ранжирование по эффективности — от наименее к наиболее результативным. Нажмите на карточку, чтобы увидеть подробности.</p>
+
+  <div class="info-box">
+    <span class="info-box-icon">💡</span>
+    <span>Категория «Образование» заняла 2-е место по объёму контента в MAX (2,01 млн постов за январь 2026), «Семья и дети» — 3-е (0,597 млн). Это подтверждает высокий интерес аудитории к образовательным темам.</span>
+  </div>
+
+  <div class="channels-list">
+
+    <!-- 1 -->
+    <div class="channel-item" onclick="toggleChannel(this)">
+      <div class="channel-header">
+        <div class="channel-rank rank-1">1</div>
+        <div style="flex:1;min-width:0;">
+          <div class="channel-name">Развлекательные / Игровые</div>
+          <div class="channel-meta">Игровые сообщества, мемы, челленджи</div>
+        </div>
+        <div class="eff-bar-wrap" style="max-width:160px;">
+          <div class="eff-label">Эффективность</div>
+          <div class="eff-bar"><div class="eff-fill fill-1" style="width:0%" data-w="10%"></div></div>
+        </div>
+        <span class="badge-eff eff-1">Минимальная</span>
+        <span class="expand-arrow">▼</span>
+      </div>
+      <div class="channel-details">
+        <p>Аудитория настроена на отдых и не ассоциирует контент с учёбой. Рекламный пост про подготовку к ЕГЭ воспринимается как чуждый элемент — «я пришёл за смешным видео, а тут математика!»</p>
+        <p>Подписчики могут листать пост мимо, не считая его релевантным. Конверсия в заинтересованных пользователей крайне низкая.</p>
+        <div class="channel-examples">
+          <span class="channel-ex">Standoff 2 (593K)</span>
+          <span class="channel-ex">Влад Бумага A4 (103K)</span>
+          <span class="channel-ex">Мемы и челленджи</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="channel-item" onclick="toggleChannel(this)">
+      <div class="channel-header">
+        <div class="channel-rank rank-2">2</div>
+        <div style="flex:1;min-width:0;">
+          <div class="channel-name">Лайфстайл / Домашние</div>
+          <div class="channel-meta">Рецепты, рукоделие, быт</div>
+        </div>
+        <div class="eff-bar-wrap" style="max-width:160px;">
+          <div class="eff-label">Эффективность</div>
+          <div class="eff-bar"><div class="eff-fill fill-2" style="width:0%" data-w="25%"></div></div>
+        </div>
+        <span class="badge-eff eff-2">Низкая</span>
+        <span class="expand-arrow">▼</span>
+      </div>
+      <div class="channel-details">
+        <p>Аудитория — преимущественно взрослые мамы, что частично совпадает с целевым сегментом B. Но тематика «рецепты» или «пособия» не перекликается с темой экзаменов — посыл «готовьтесь к ЕГЭ» будет казаться неуместным.</p>
+        <p>Можно использовать для охвата, но конверсия будет низкой — родители отметят пост как рекламу и пройдут мимо.</p>
+        <div class="channel-examples">
+          <span class="channel-ex">Мамины рецепты (44K)</span>
+          <span class="channel-ex">Поделки для детей (52K)</span>
+          <span class="channel-ex">Кулинарные каналы</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="channel-item" onclick="toggleChannel(this)">
+      <div class="channel-header">
+        <div class="channel-rank rank-3">3</div>
+        <div style="flex:1;min-width:0;">
+          <div class="channel-name">Языковые каналы</div>
+          <div class="channel-meta">Изучение иностранных языков</div>
+        </div>
+        <div class="eff-bar-wrap" style="max-width:160px;">
+          <div class="eff-label">Эффективность</div>
+          <div class="eff-bar"><div class="eff-fill fill-3" style="width:0%" data-w="40%"></div></div>
+        </div>
+        <span class="badge-eff eff-3">Средняя</span>
+        <span class="expand-arrow">▼</span>
+      </div>
+      <div class="channel-details">
+        <p>Напрямую связаны с ЕГЭ — заинтересуют детей, которым важен иностранный язык. Однако аудитория невелика (несколько тысяч подписчиков) и сильно нишевая.</p>
+        <p>В Telegram такие каналы были популярны, но на MAX только набирают обороты. Если использовать — нужно адаптировать под школьную программу и конкретно упоминать ЕГЭ.</p>
+        <div class="channel-examples">
+          <span class="channel-ex">Английский с нуля (~2.7K)</span>
+          <span class="channel-ex">Изучение языков</span>
+          <span class="channel-ex">Подготовка к ЕГЭ (англ.)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="channel-item" onclick="toggleChannel(this)">
+      <div class="channel-header">
+        <div class="channel-rank rank-4">4</div>
+        <div style="flex:1;min-width:0;">
+          <div class="channel-name">Саморазвитие и мотивация</div>
+          <div class="channel-meta">Лайфхаки, тайм-менеджмент, личностный рост</div>
+        </div>
+        <div class="eff-bar-wrap" style="max-width:160px;">
+          <div class="eff-label">Эффективность</div>
+          <div class="eff-bar"><div class="eff-fill fill-4" style="width:0%" data-w="60%"></div></div>
+        </div>
+        <span class="badge-eff eff-4">Умеренная</span>
+        <span class="expand-arrow">▼</span>
+      </div>
+      <div class="channel-details">
+        <p>Аудитория — подростки и молодые люди, стремящиеся к личному росту. Темы «как учиться эффективно», «мотивация на результат» органично перекликаются с позиционированием «99 Баллов».</p>
+        <p>Формируют доверие через экспертный тон и вдохновляющие истории. Проверены в Telegram, набирают популярность в MAX. Конверсия средняя — часть аудитории воспримет рекламу позитивно, часть — как саморекламу.</p>
+        <div class="channel-examples">
+          <span class="channel-ex">Культура речи · Саморазвитие (49K)</span>
+          <span class="channel-ex">Тайм-менеджмент</span>
+          <span class="channel-ex">Личностный рост</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="channel-item" onclick="toggleChannel(this)">
+      <div class="channel-header">
+        <div class="channel-rank rank-5">5</div>
+        <div style="flex:1;min-width:0;">
+          <div class="channel-name">Школьные / Образовательные</div>
+          <div class="channel-meta">Подготовка к экзаменам, учителя, школьные новости</div>
+        </div>
+        <div class="eff-bar-wrap" style="max-width:160px;">
+          <div class="eff-label">Эффективность</div>
+          <div class="eff-bar"><div class="eff-fill fill-5" style="width:0%" data-w="80%"></div></div>
+        </div>
+        <span class="badge-eff eff-5">Высокая</span>
+        <span class="expand-arrow">▼</span>
+      </div>
+      <div class="channel-details">
+        <p>Подписчики точно входят в ЦА: ученики и родители, которые ищут информацию о ЕГЭ, разборы заданий, советы репетиторов. Реклама «99 Баллов» воспринимается органично — «это наш профиль».</p>
+        <p>Меньше по численности, чем развлекательные, но качество лидов значительно выше — именно эти люди реально готовятся к экзаменам. Строить доверие здесь проще всего.</p>
+        <div class="channel-examples">
+          <span class="channel-ex">Объясняем.рф (78K)</span>
+          <span class="channel-ex">Лингвист. Русский язык (54K)</span>
+          <span class="channel-ex">Педагоги России (31K)</span>
+          <span class="channel-ex">Школы РФ (45K)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 -->
+    <div class="channel-item" onclick="toggleChannel(this)">
+      <div class="channel-header">
+        <div class="channel-rank rank-6">6</div>
+        <div style="flex:1;min-width:0;">
+          <div class="channel-name">Официально-образовательные / Правительственные</div>
+          <div class="channel-meta">Минпросвещения, Госуслуги, региональные каналы</div>
+        </div>
+        <div class="eff-bar-wrap" style="max-width:160px;">
+          <div class="eff-label">Эффективность</div>
+          <div class="eff-bar"><div class="eff-fill fill-6" style="width:0%" data-w="100%"></div></div>
+        </div>
+        <span class="badge-eff eff-6">Максимальная</span>
+        <span class="expand-arrow">▼</span>
+      </div>
+      <div class="channel-details">
+        <p>Крупные авторитетные каналы с активной, лояльной аудиторией. Реклама здесь воспринимается как «почти официальная рекомендация». Максимальное доверие: аудитория уже готова принять информацию о надёжных образовательных сервисах.</p>
+        <p>Родитель, увидевший пост от официального сообщества, с высокой долей вероятности перейдёт на канал «99 Баллов». Здесь самый точный целевой трафик.</p>
+        <div class="channel-examples">
+          <span class="channel-ex">Госуслуги для родителей (200K)</span>
+          <span class="channel-ex">Минпросвещения России (42K)</span>
+          <span class="channel-ex">Образование Подмосковья (77K)</span>
+          <span class="channel-ex">Между нами, мамочками (57K)</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════ SECTION: COMPARISON ═══════════════════ -->
+<section class="section" id="section-comparison">
+  <h2 class="section-title">MAX vs Telegram</h2>
+  <p class="section-desc">Стратегии, которые хорошо работали в Telegram, не переносятся напрямую в MAX — сравниваем ключевые различия</p>
+
+  <div class="info-box">
+    <span class="info-box-icon">⚠️</span>
+    <span>Часть ниш, работавших в Telegram, на MAX малоразвита или ведёт себя иначе. Не стоит ожидать тех же результатов без адаптации под специфику платформы.</span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Критерий</th>
+          <th class="tg">Telegram</th>
+          <th class="mx">MAX</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Откуда аудитория</td>
+          <td>Приходит по собственной инициативе — осознанный выбор платформы</td>
+          <td class="cell-warn">Многие пришли по инициативе школы — ниже изначальная вовлечённость</td>
+        </tr>
+        <tr>
+          <td>Развлекательный контент</td>
+          <td class="cell-good">Тренды, знаменитости и мемы отлично привлекали подростков</td>
+          <td class="cell-bad">Аудитория развлекательных каналов скептична к рекламе — низкая конверсия</td>
+        </tr>
+        <tr>
+          <td>Языковые каналы</td>
+          <td class="cell-good">«Английский за час» и похожие — активные, большие аудитории</td>
+          <td class="cell-warn">На MAX только развиваются (≈2.7K подписчиков). Ограниченный охват</td>
+        </tr>
+        <tr>
+          <td>Официальные каналы</td>
+          <td>Менее выражено — официальные источники уступают независимым</td>
+          <td class="cell-good">MAX активно продвигает государственные каналы. «Госуслуги» — 200K, высокое доверие</td>
+        </tr>
+        <tr>
+          <td>Образовательная ниша</td>
+          <td class="cell-good">Зрелая экосистема, много крупных образовательных каналов</td>
+          <td class="cell-good">Растущая — 2,01 млн постов за январь 2026. «Образование» — 2-е место по объёму</td>
+        </tr>
+        <tr>
+          <td>Родительская аудитория</td>
+          <td>Родительские сообщества присутствуют, но менее структурированы</td>
+          <td class="cell-good">Школьные чаты и родительские каналы — основной мотив входа в MAX</td>
+        </tr>
+        <tr>
+          <td>Доверие к рекламе</td>
+          <td>Высокое в нишевых каналах, ниже — в крупных</td>
+          <td class="cell-warn">В новых условиях формируется — особенно у аудитории, пришедшей «по обязанности»</td>
+        </tr>
+        <tr>
+          <td>Блогеры</td>
+          <td class="cell-good">Инфлюенсеры работают хорошо в нишах с интересом к образованию</td>
+          <td class="cell-bad">А4 и подобные есть в MAX, но реклама школы там воспринимается как навязывание</td>
+        </tr>
+        <tr>
+          <td>Оптимальная стратегия</td>
+          <td>Микс: тренды + образовательные каналы + инфлюенсеры</td>
+          <td class="cell-good">Ставка на образовательные и официальные каналы — здесь доверие выше всего</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════ SECTION: HYPOTHESES ═══════════════════ -->
+<section class="section" id="section-hypotheses">
+  <h2 class="section-title">Гипотезы для тестирования</h2>
+  <p class="section-desc">Конкретные гипотезы по размещению и форматам, которые стоит проверить в первую очередь</p>
+
+  <div class="hypo-grid">
+
+    <div class="hypo-card">
+      <div class="hypo-num">01</div>
+      <h4>Официальные + образовательные каналы дают лучший CPC</h4>
+      <p>Размещение в каналах «Госуслуги для родителей», «Минпросвещения» и региональных образовательных каналах обеспечит более низкую стоимость целевого действия, чем размлещение в развлекательных каналах с большей аудиторией.</p>
+      <div class="hypo-metric">
+        <span class="hypo-met-item">CPC</span>
+        <span class="hypo-met-item">CTR</span>
+        <span class="hypo-met-item">Конверсия в подписку</span>
+      </div>
+    </div>
+
+    <div class="hypo-card">
+      <div class="hypo-num">02</div>
+      <h4>История успеха «80+ баллов» работает лучше у родителей</h4>
+      <p>Пост с конкретными цифрами («Наши ученики набрали 80+ баллов на ЕГЭ — вот как мы готовим») в родительских каналах даст более высокую конверсию, чем эмоциональный посыл «экзамен без стресса» — у детей.</p>
+      <div class="hypo-metric">
+        <span class="hypo-met-item">Split-тест A/B</span>
+        <span class="hypo-met-item">Сегмент: родители</span>
+      </div>
+    </div>
+
+    <div class="hypo-card">
+      <div class="hypo-num">03</div>
+      <h4>Квиз / тест по предмету = лучший лид-магнит для школьников</h4>
+      <p>Пост с интерактивным тестом («Проверь свои знания: 5 заданий из ЕГЭ по математике») в образовательных каналах привлечёт больше переходов, чем классический пост-анонс с ссылкой.</p>
+      <div class="hypo-metric">
+        <span class="hypo-met-item">Охват</span>
+        <span class="hypo-met-item">Глубина просмотра</span>
+        <span class="hypo-met-item">Лиды</span>
+      </div>
+    </div>
+
+    <div class="hypo-card">
+      <div class="hypo-num">04</div>
+      <h4>Каналы «Саморазвитие» привлекают школьников с более высокой мотивацией</h4>
+      <p>Лиды из каналов про личностный рост и тайм-менеджмент конвертируются в платных клиентов лучше, чем из языковых нишевых каналов, несмотря на схожий размер аудиторий.</p>
+      <div class="hypo-metric">
+        <span class="hypo-met-item">Конверсия в оплату</span>
+        <span class="hypo-met-item">LTV</span>
+      </div>
+    </div>
+
+    <div class="hypo-card">
+      <div class="hypo-num">05</div>
+      <h4>Бесплатный вебинар как оффер работает лучше прямой рекламы</h4>
+      <p>Объявление о бесплатном открытом уроке или онлайн-квесте по подготовке к ЕГЭ снизит барьер входа и даст больше регистраций, чем прямой призыв «подпишись на курс».</p>
+      <div class="hypo-metric">
+        <span class="hypo-met-item">Регистрации</span>
+        <span class="hypo-met-item">Доходимость</span>
+        <span class="hypo-met-item">Конверсия после</span>
+      </div>
+    </div>
+
+    <div class="hypo-card">
+      <div class="hypo-num">06</div>
+      <h4>Нативный формат в школьных каналах даёт лучший результат</h4>
+      <p>Публикация полезного контента (разбор задания ЕГЭ, лайфхак по подготовке) с нативным упоминанием «99 Баллов» в конце привлечёт больше лояльных подписчиков, чем явный рекламный пост.</p>
+      <div class="hypo-metric">
+        <span class="hypo-met-item">Качество лидов</span>
+        <span class="hypo-met-item">Подписки на канал</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════ SECTION: CONCLUSIONS ═══════════════════ -->
+<section class="section" id="section-conclusions">
+  <h2 class="section-title">Выводы и приоритеты</h2>
+  <p class="section-desc">Ключевые инсайты анализа и рекомендации по стратегии продвижения в MAX</p>
+
+  <div class="conclusion-grid">
+    <div class="concl-card">
+      <div class="concl-num">Инсайт 01</div>
+      <h4>MAX — не просто «другой Telegram»</h4>
+      <p>Аудитория пришла по-другому — через школьную инициативу. Стратегии, основанные на трендах и блогерах, работают хуже. Нужна собственная логика коммуникации.</p>
+    </div>
+    <div class="concl-card">
+      <div class="concl-num">Инсайт 02</div>
+      <h4>Официальность = доверие</h4>
+      <p>В MAX сильны государственные и официальные каналы. Размещение рядом с ними повышает воспринимаемую надёжность бренда «99 Баллов» — особенно у родителей.</p>
+    </div>
+    <div class="concl-card">
+      <div class="concl-num">Инсайт 03</div>
+      <h4>«Образование» — 2-е место по контенту</h4>
+      <p>2,01 млн постов за январь 2026 — это живая, активная ниша. Конкуренция есть, но и спрос огромный. Заходить нужно сейчас, пока ниша не перегрета.</p>
+    </div>
+    <div class="concl-card">
+      <div class="concl-num">Инсайт 04</div>
+      <h4>Два разных языка коммуникации</h4>
+      <p>Школьники и родители требуют принципиально разного контента: яркий/игровой для детей vs. доказательный/экспертный для взрослых. Смешивать нельзя.</p>
+    </div>
+  </div>
+
+  <div class="priority-box">
+    <h3>Приоритетная воронка размещения</h3>
+    <div class="priority-list">
+      <div class="priority-row">
+        <div class="channel-rank rank-6" style="width:32px;height:32px;font-size:13px;">★</div>
+        <div>
+          <div class="priority-label">Официальные каналы (Госуслуги, Минпросвещения, регионы)</div>
+          <div class="priority-sub">Максимальное доверие · Целевая аудитория родителей · Воспринимается как рекомендация</div>
+        </div>
+        <span class="prio-arrow">→ Размещать в первую очередь</span>
+      </div>
+      <div class="priority-row">
+        <div class="channel-rank rank-5" style="width:32px;height:32px;font-size:13px;">A</div>
+        <div>
+          <div class="priority-label">Школьные / образовательные каналы</div>
+          <div class="priority-sub">Высокая релевантность · Оба сегмента ЦА · Нативная интеграция</div>
+        </div>
+        <span class="prio-arrow">→ Основной канал</span>
+      </div>
+      <div class="priority-row">
+        <div class="channel-rank rank-4" style="width:32px;height:32px;font-size:13px;">B</div>
+        <div>
+          <div class="priority-label">Саморазвитие и мотивация</div>
+          <div class="priority-sub">Умеренная эффективность · Мотивированная молодёжь · Хорошо для тестов</div>
+        </div>
+        <span class="prio-arrow">→ Дополнительный канал</span>
+      </div>
+      <div class="priority-row">
+        <div class="channel-rank rank-3" style="width:32px;height:32px;font-size:13px;">C</div>
+        <div>
+          <div class="priority-label">Языковые каналы</div>
+          <div class="priority-sub">Нишевая аудитория · Малый охват · Только если нужен точечный сегмент</div>
+        </div>
+        <span class="prio-arrow">→ Нишевый охват</span>
+      </div>
+      <div class="priority-row" style="opacity:0.5;">
+        <div class="channel-rank rank-1" style="width:32px;height:32px;font-size:13px;">✗</div>
+        <div>
+          <div class="priority-label">Развлекательные / Лайфстайл</div>
+          <div class="priority-sub">Низкая конверсия · Нерелевантный контекст · Нецелевой трафик</div>
+        </div>
+        <span class="prio-arrow">→ Исключить</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- JS -->
+<script>
+  // Tab navigation
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.section;
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('section-' + target).classList.add('active');
+      // Animate bars when channels tab opens
+      if (target === 'channels') setTimeout(animateBars, 100);
+    });
+  });
+
+  // Accordion
+  function toggleAccordion(btn) {
+    const item = btn.closest('.accordion-item');
+    item.classList.toggle('open');
+  }
+
+  // Channel cards
+  function toggleChannel(el) {
+    el.classList.toggle('expanded');
+  }
+
+  // Animate effectiveness bars
+  function animateBars() {
+    document.querySelectorAll('.eff-fill').forEach(fill => {
+      const w = fill.dataset.w || fill.className.match(/fill-(\d)/)?.[1];
+      if (fill.dataset.w) {
+        fill.style.width = fill.dataset.w;
+      }
+    });
+  }
+
+  // Trigger bar animation on load if channels is active
+  window.addEventListener('load', () => {
+    const activeSection = document.querySelector('.section.active');
+    if (activeSection && activeSection.id === 'section-channels') animateBars();
+    // Also animate on first switch
+  });
+
+  // Delay bar animation on initial channels render
+  document.querySelector('[data-section="channels"]').addEventListener('click', () => {
+    setTimeout(animateBars, 200);
+  });
+</script>
+
+</body>
+</html>
